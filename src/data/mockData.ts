@@ -18,6 +18,7 @@ export interface Question {
   department: string;
 }
 
+
 export interface Answer {
   id: string;
   content: string;
@@ -25,7 +26,12 @@ export interface Answer {
   votes: number;
   createdAt: string;
   isAccepted?: boolean;
-}
+  replies?:{
+    id: string;
+    content: string;
+  }[];
+  };
+
 
 export const mockUsers: User[] = [
   {

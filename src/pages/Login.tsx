@@ -1,46 +1,15 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { useUserCxt } from "@/data/userContext";
-import { useAuthCxt } from "@/data/authContext";
-
 
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [isError, setisError] = useState(false);
-  const Userid = useRef<any>();
-  const Password = useRef<any>();
-  const userCxt = useUserCxt();
-  const authCxt = useAuthCxt();
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    setisError(false);
-    const userid = Userid.current.value;
-    const password = Password.current.value;
-    if (!(userid && password)) {
-      setisError(true);
-      return;
-    } else {
-      const tempUser = {
-        ...userCxt.usersList.find((user) => {
-          return userid === user.email;
-        }),
-      };
-      if (password === tempUser.password) {
-        authCxt.loginHandler(tempUser.id, tempUser.role);
-        if (tempUser.role === "admin") {
-          navigate("/Admingifts");
-        } else {
-          navigate("/home");
-        }
-      } else {
-        alert("Username or password is wrong");
-      }
-    }
+    navigate("/home");
   };
 
   return (
@@ -58,7 +27,7 @@ const Login = () => {
             </div>
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome to Work Hacks Hub
+            Welcome to OrgFlow
           </h1>
           <p className="text-muted-foreground">Your internal knowledge hub</p>
         </div>
@@ -69,7 +38,6 @@ const Login = () => {
               type="email"
               placeholder="Corporate Email"
               className="h-12"
-              ref={Userid}
               required
             />
           </div>
@@ -78,7 +46,6 @@ const Login = () => {
               type="password"
               placeholder="Password"
               className="h-12"
-              ref={Password}
               required
             />
           </div>
@@ -98,12 +65,12 @@ const Login = () => {
         </form>
 
         <div className="mt-6 text-center">
-          {/* {!isSignUp && (
+          {!isSignUp && (
             <a href="#" className="text-primary hover:underline text-sm">
               Forgot Password?
             </a>
-          )} */}
-          {/* <div className="mt-4">
+          )}
+          <div className="mt-4">
             <button
               onClick={() => setIsSignUp(!isSignUp)}
               className="text-sm text-muted-foreground hover:text-foreground"
@@ -112,7 +79,7 @@ const Login = () => {
                 ? "Already have an account? Sign in"
                 : "Don't have an account? Sign up"}
             </button>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

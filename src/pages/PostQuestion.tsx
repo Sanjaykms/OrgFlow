@@ -18,24 +18,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-// ✅ IMPORT CONTEXT
-import { useQuestionCxt } from "@/data/questionsContext";
-
-// (TEMP) Mock author — replace with logged-in user later
-import { mockUsers } from "@/data/mockData";
-import { useAuthCxt } from "@/data/authContext";
-import { useUserCxt } from "@/data/userContext";
-
 export const PostQuestion = () => {
-  const { questionDispatchFn } = useQuestionCxt(); // <— USE CONTEXT
-
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [department, setDepartment] = useState("Engineering");
   const [tags, setTags] = useState<string[]>([]);
   const [customTag, setCustomTag] = useState("");
-  const authCxt = useAuthCxt();
-  const userList = useUserCxt();
 
   const defaultTags = [
     { label: "Tech", value: "tech" },
@@ -54,49 +39,9 @@ export const PostQuestion = () => {
     }
   };
 
-  // 🚀 Submit Question
-  const handleSubmit = () => {
-    if (!title.trim() || !content.trim()) {
-      alert("Please fill title and description.");
-      return;
-    }
-
-    var tempUser = {
-        ...userList.usersList.find((user) => {
-          return authCxt.userInfo.userId === user.id;
-        }),
-      };
-
-
-
-
-   const newQuestion = {
-      id: crypto.randomUUID(),
-      title,
-      content,
-      tags,
-      department,
-      author: tempUser, // ⚠ later replace with logged-in user
-      votes: 0,
-      answers: 0,
-      views: 0,
-      createdAt: new Date().toISOString().slice(0, 10), // "YYYY-MM-DD"
-    };
-
-    questionDispatchFn({ type: "ADD_QUESTION", value: newQuestion });
-
-    // Clear fields after submit
-    setTitle("");
-    setContent("");
-    setTags([]);
-    setCustomTag("");
-
-    alert("Your question has been posted!");
-  };
-
   return (
     <>
-      <Header showHomeButton={true}/>
+      <Header showHomeButton showSearchButton={false} />
 
       <div className="max-w-3xl mx-auto p-4 md:p-6">
         <h1 className="text-3xl font-semibold mb-6">Post Your Question</h1>
@@ -115,8 +60,7 @@ export const PostQuestion = () => {
               <label className="font-medium text-base">Title</label>
               <Input
                 placeholder="Enter a clear question title..."
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                name="title"
                 className="h-11 rounded-xl"
               />
             </div>
@@ -126,8 +70,7 @@ export const PostQuestion = () => {
               <label className="font-medium text-base">Description</label>
               <Textarea
                 placeholder="Describe your question in detail..."
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                name="description"
                 className="min-h-32 rounded-xl resize-none"
               />
             </div>
@@ -136,10 +79,7 @@ export const PostQuestion = () => {
             <div className="space-y-2">
               <label className="font-medium text-base">Department</label>
 
-              <Select
-                value={department}
-                onValueChange={(v) => setDepartment(v)}
-              >
+              <Select name="department" defaultValue="My Questions">
                 <SelectTrigger className="w-full md:w-64 h-11 rounded-xl">
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
@@ -233,6 +173,8 @@ export const PostQuestion = () => {
                 </Button>
               </div>
 
+              <input type="hidden" name="tags" value={tags.join(",")} />
+
               <p className="text-sm text-muted-foreground">
                 Selected Tags: {tags.length ? tags.join(", ") : "None"}
               </p>
@@ -240,10 +182,7 @@ export const PostQuestion = () => {
 
             {/* Submit Button */}
             <div className="pt-4">
-              <Button
-                onClick={handleSubmit}
-                className="w-full md:w-auto h-11 px-6 rounded-xl shadow-md"
-              >
+              <Button className="w-full md:w-auto h-11 px-6 rounded-xl shadow-md">
                 Submit Question
               </Button>
             </div>
